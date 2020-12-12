@@ -21,7 +21,7 @@ def optimizar():
 
 	cols = st.multiselect("Selecciona las columnas a optimizar", df.columns)
 	if len(cols)<3:
-		return st.warning("Selecciona 3 columnas")
+		return st.warning("Selecciona al menos 3 columnas")
 
 	s = px.scatter_3d(data_frame=df, x=cols[0], y=cols[1], z=cols[2], color=cols[2], opacity=1, size_max=0.1)
 	st.write(s)
@@ -43,10 +43,18 @@ def optimizar():
 	clusters.fit(df[cols])
 
 	centros = clusters.cluster_centers_
+
 	labels = clusters.labels_.reshape(-1,1)
 	cols.append("labels")
 	df["labels"] = labels
 	s = px.scatter_3d(data_frame=df, x=cols[0], y=cols[1], z=cols[2], color=df.labels, opacity=1, size_max=0.1)
 	st.write(s)
+
+	st.header("Resultados")
+	d = {}
+	for i, col in enumerate(cols[:-1]):
+		d[col] = centros[:,i]
+
+	st.table(d)
 
 optimizar()
